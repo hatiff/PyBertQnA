@@ -499,13 +499,13 @@ RawResult = collections.namedtuple("RawResult",
 
 
 
-def QnA(paragraph, questions, model):
+def QnA(paragraph, questions):
     max_seq_length = 384
     doc_stride = 128
     max_query_length = 64
     max_answer_length = 30
     
-    model_path = model
+    model_path = 'pytorch_model.bin'
     
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     n_gpu = torch.cuda.device_count()
@@ -543,19 +543,8 @@ def QnA(paragraph, questions, model):
     all_segment_ids = torch.tensor([f.segment_ids for f in eval_features], dtype=torch.long)
     all_example_index = torch.arange(all_input_ids.size(0), dtype=torch.long)
     
-    ### Loading Pretrained model for QnA
-    config = BertConfig({
-                "attention_probs_dropout_prob": 0.1,
-                "hidden_act": "gelu",
-                "hidden_dropout_prob": 0.1,
-                "hidden_size": 768,
-                "initializer_range": 0.02,
-                "intermediate_size": 3072,
-                "max_position_embeddings": 512,
-                "num_attention_heads": 12,
-                "num_hidden_layers": 12,
-                "type_vocab_size": 2,
-                "vocab_size": 30522})
+    ### Loading Pretrained model for QnA 
+    config = BertConfig('bert_config.json')
     model = BertForQuestionAnswering(config)
     model.load_state_dict(torch.load(model_path, map_location='cpu'))
     model.to(device)
