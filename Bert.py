@@ -543,8 +543,9 @@ def QnA(paragraph, questions, model):
     all_segment_ids = torch.tensor([f.segment_ids for f in eval_features], dtype=torch.long)
     all_example_index = torch.arange(all_input_ids.size(0), dtype=torch.long)
     
-    ### Loading Pretrained model for QnA 
-    config = BertConfig(config_file='bert_config.json')
+    ### Loading Pretrained model for QnA
+    config = str('bert_config.json')
+    config = BertConfig(config_file=config)
     model = BertForQuestionAnswering(config)
     model.load_state_dict(torch.load(model_path, map_location='cpu'))
     model.to(device)
